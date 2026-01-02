@@ -21,7 +21,7 @@ The development focus was on **Drawdown Reduction** and **Risk-Adjusted Returns*
 ## Risk Validation (Monte Carlo)
 To ensure the strategy's edge is not a result of "luck" or specific trade sequencing, I performed a **Monte Carlo Simulation (n=1000)** using Python.
 
-![Monte Carlo Simulation](./assets/montecalro.png)
+<img width="999" height="547" alt="image" src="https://github.com/user-attachments/assets/73062df2-43bf-41e2-a86d-41d10e80d293" />
 
 * **Average Max Drawdown**: 5.17M JPY
 * **Tail Risk (Worst Case)**: 17.68M JPY
