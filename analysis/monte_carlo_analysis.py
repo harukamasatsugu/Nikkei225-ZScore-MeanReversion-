@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # 1. データの読み込み
 # ファイル名を実際にアップロードしたものに書き換えてください
-df = pd.read_csv('Quant_ZScore_Final_v6_OSE_NK2251!_2026-01-02.csv')
+df = pd.read_csv('トレード結果を出力.csv')
 
 # 2. データのクリーニング（決済行だけを抽出して重複を防ぐ）
 # 「タイプ」列に「決済」という文字が含まれる行だけを抽出します
