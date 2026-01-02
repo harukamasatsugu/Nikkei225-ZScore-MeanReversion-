@@ -1,0 +1,43 @@
+//@version=5
+strategy("Quant_ZScore_Final_v6", overlay=true, initial_capital=10000000, default_qty_type=strategy.fixed, default_qty_value=1)
+
+// --- パラメータ ---
+len = 20
+trend_len = 200
+upper_threshold = 1.0
+lower_threshold = -1.0
+stop_z_threshold = 3.0
+
+// 【追加】時間帯フィルター（例：9:30から翌2:00までのみエントリー許可）
+// 寄付き直後の30分と、深夜の急変時間を避ける設定
+time_session = input.session("0930-0200", "Trading Session")
+is_in_session = not na(time(timeframe.period, time_session))
+
+// --- 指標計算 ---
+zScore = (close - ta.sma(close, len)) / ta.stdev(close, len)
+sma_long = ta.sma(close, trend_len)
+
+// --- 売買条件（トレンドフィルター ＋ 時間帯フィルター） ---
+can_entry = is_in_session and (strategy.position_size == 0)
+
+if (can_entry)
+    if (close > sma_long and zScore < lower_threshold)
+        strategy.entry("Long", strategy.long)
+    if (close < sma_long and zScore > upper_threshold)
+        strategy.entry("Short", strategy.short)
+
+// --- エグジット（前回と同じ） ---
+if (strategy.position_size > 0 and zScore >= 0)
+    strategy.close("Long", comment="TP")
+if (strategy.position_size < 0 and zScore <= 0)
+    strategy.close("Short", comment="TP")
+
+// 異常検知ストップ
+if (strategy.position_size > 0 and zScore <= -stop_z_threshold)
+    strategy.close("Long", comment="Emergency")
+if (strategy.position_size < 0 and zScore >= stop_z_threshold)
+    strategy.close("Short", comment="Emergency")
+
+// ハード・ストップ（5%）
+max_loss_price = strategy.position_avg_price * 0.05
+strategy.exit("Hard_SL", stop = strategy.position_size > 0 ? strategy.position_avg_price - max_loss_price : strategy.position_avg_price + max_loss_price)
